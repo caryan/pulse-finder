@@ -1,0 +1,21 @@
+# Nuclear types
+7.0013e+08	H
+1.76048e+08	C
+# Nuclei: <frequency><tab><name><tab><type>
+-0.158496	H1	H
+-1035.009575	C1	C
+1040.494175	C2	C
+# Reference frequencies:
+refFreq	H	H1
+offsetFreq	H	0
+refFreq	C	C1;C2
+offsetFreq	C	0
+# Couplings:  <frequency><tab><name><tab><name> (must be in lex. order.)
+118.178028	H1	C1
+21.129303	H1	C2
+66.265330	C1	C2
+# T2 error rates:
+0.252297	H1
+0.583239	C1
+0.429725	C2
+# End data
