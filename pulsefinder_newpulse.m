@@ -13,7 +13,7 @@ if(~isempty(params.pulseguess))
     if(params.Zfreedomflag)
         zangles = params.pulseguess.zangles;
     else
-        zangles = zeros(2,spins.nb);
+        zangles = zeros(2,params.nbspins);
     end
     %There is only point in trying one
     params.numtry = 1;
