@@ -5,12 +5,18 @@ function params = pulsefinder_loadparams(paramsfile)
 
 params = struct();
 
-%Check the file exists and then evaluate
-if(exist(paramsfile,'file'))
-    eval(paramsfile)
+%Load it and evaluate line by line because eval(file) does not work in compiled code
+paramsFID = fopen([paramsfile '.m'],'r');
+if(paramsFID ~= -1)
+    paramslines = textscan(paramsFID,'%s','delimiter','\n');
+    paramslines = paramslines{1};
+    for linect = 1:1:size(paramslines,1)
+        eval(paramslines{linect});
+    end
 else
     error('paramsfile does not exist.');
 end
+fclose(paramsFID);
 
 %Check for a molecule file and that the file exists
 if(isfield(params,'nucleifile'))
