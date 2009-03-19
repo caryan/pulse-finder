@@ -2,7 +2,7 @@ function pulseout = smoothpulse(pulsein,finaldisc,window,plotflag,phaserampflag)
 
 %This function smoothes and rediscretizes a pulse.
 %
-% pulseout = smoothpulse(pulsein,findaldisc,window,plotflag,phaserampflag)
+% pulseout = smoothpulse(pulsein,findaldisc,window,plotflag,phaserampflag (optional))
 %
 % pulsein: a pulse structure that you wish to smooth
 % finaldisc: the final time discritization 
@@ -10,27 +10,13 @@ function pulseout = smoothpulse(pulsein,finaldisc,window,plotflag,phaserampflag)
 % plotflag: 1 to plot, 0 otherwise
 % phaserampflag: 1 to convert Z controls into phase ramps
 
-%Load the pulse
-chunkypulse = pulsein.pulse;
-
-%Now discritize the pulse in 50ns periods
-maxsize = fix(sum(chunkypulse(:,1))/50e-9 + 1/50);
-discpulse = zeros(maxsize,size(chunkypulse,2)-1);
-pointer = 1;
-for ct = 1:1:size(chunkypulse,1)
-  numrep = fix(chunkypulse(ct,1)/50e-9 + 1/50);
-  
-  discpulse(pointer:pointer+numrep-1,:) = repmat(chunkypulse(ct,2: ...
-                                                    end),numrep,1);
-  pointer = pointer+numrep;
+if(nargin < 5)
+    phaserampflag = 0;
 end
 
-%Remove any extra points
-discpulse(pointer:end,:) = [];
-
-%Sample the points
-samprate = fix(finaldisc/50e-9 + 1/50);
-samppulse = discpulse(fix(samprate/2):samprate:end,:);
+%Use interp1 to resample the pulse at the finaldisc nearest interpolation.
+%This will allow us to control the smoothing with the filter below
+samppulse = interp1(cumsum(pulsein.pulse(:,1)),pulsein.pulse(:,2:end),finaldisc*(1:round(sum(pulsein.pulse(:,1))/finaldisc))','nearest','extrap');
 
 %Smooth it out
 smoothedpulse = filtfilt(ones(1,window)/window,1,samppulse);
@@ -77,14 +63,11 @@ if(phaserampflag == 1)
   pulseout.pulse = [finaldisc*ones(size(samppulsebis,1),1) samppulsebis];
   pulseout.params.plength = size(pulseout.pulse,1);
   
-
-  
 else
 
 pulseout = pulsein;
 pulseout.pulse = [finaldisc*ones(size(samppulse,1),1) smoothedpulse];
 pulseout.params.plength = size(pulseout.pulse,1);
 end    
-    
 
 return
