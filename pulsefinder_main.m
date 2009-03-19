@@ -1,4 +1,4 @@
-function pulses = pulsefinder_main(paramsfile,outputfilename)
+function pulses_out = pulsefinder_main(paramsfile,outputfilename)
 
 %This MATLAB file tries to find strongly modulating pulses based on the
 %GRAPE method see JMR Vol 172 pgs 296-305
@@ -27,7 +27,6 @@ function pulses = pulsefinder_main(paramsfile,outputfilename)
 
 %Define the pulses variable as global so that it can be retrieved after
 %kill the program
-clear global pulses;
 global pulses
 
 %Load the output file or set to standard out
@@ -284,3 +283,7 @@ end
 if(outputFID ~= 1)
     fclose(outputFID);
 end
+
+%Return the pulses cell array
+pulses_out = pulses;
+
