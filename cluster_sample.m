@@ -14,7 +14,7 @@ pfobj.submit(1:3);
 pfobj.dispresults;
 
 %Look at the details for pulses 1 and 3
-pfobj.displogfile([1 3]);
+pfobj.displogfile([1 2 3]);
 
 %Kill pulsefinder 2
 %pfobj.kill(2);
