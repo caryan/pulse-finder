@@ -28,6 +28,7 @@ function pulses_out = pulsefinder_main(paramsfile,outputfilename)
 %Define the pulses variable as global so that it can be retrieved after
 %kill the program
 global pulses
+pulses = [];
 
 %Load the output file or set to standard out
 if(nargin == 1)
