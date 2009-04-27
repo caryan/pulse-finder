@@ -38,7 +38,7 @@ if(params.onofframps)
 % you move away from the end points (larger = decreases faster)
 % The penalty function is some sort of cosh function
   numpts = 10;
-  param1 = 1e-3;
+  param1 = 1e-4;
   param2 = 0.25;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
 

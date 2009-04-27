@@ -16,7 +16,7 @@ pulse = pulsestrucin.pulse(:,2*channel:2*channel+1);
 
 %Some additional paramaters
 %Bruker or soft flag
-bruker = 1;
+bruker = 0;
 
 %How many pts per period to write out
 ptsper = 1;
