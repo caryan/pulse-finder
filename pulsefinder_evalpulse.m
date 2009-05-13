@@ -28,7 +28,7 @@ corrmat = [];
 %If we are allowing Zfreedom, then modify the Uwant or
 %rhoin/rhogoal by the Z rotations
 if(params.Zfreedomflag)
-
+    
     %Set up the corrmat: each column contains the diagonal of ZIII,IZII....
     corrmat = zeros(2^nbspins,nbspins);
     for ct = 1:1:nbspins
@@ -36,21 +36,21 @@ if(params.Zfreedomflag)
         corrmat(:,end-ct+1) =  repmat([zeros(reps,1);ones(reps,1)],2^nbspins/reps/2,1);
     end
     corrmat  = -2*corrmat +1;
-
+    
     Zpre = 0; Zpost = 0;
     for ct = 1:1:size(corrmat,2)
         Zpre = Zpre + zangles(1,ct)*corrmat(:,ct);
         Zpost = Zpost + zangles(2,ct)*corrmat(:,ct);
     end
-
+    
 end  %params.Zfreedomflag if
 
 %Loop over the Hamiltonian distribution
 for Hamct = 1:1:length(Hamdist)
-
+    
     %Load the matrix of Hamiltonian shifts
     Hamshift = 2*pi*params.Hammatts{Hamct};
-
+    
     %Reset the Uwant and rhoin and rhogoal to the params values
     if(params.searchtype == 1)
         Uwant = Uwant_in;
@@ -60,18 +60,20 @@ for Hamct = 1:1:length(Hamdist)
         rhoin = rhoin_in;
         rhogoal = rhogoal_in;
     end
-
+    
     %Modify the desired unitary or the goal states by the soft pulse
     %buffer free evolution
-    if(params.searchtype == 1)
-        Uwant = expm(1i*params.softpulsebuffer*(HNAT+Hamshift))*Uwant*expm(1i*params.softpulsebuffer*(HNAT+Hamshift));
-    elseif(params.searchtype == 2)
-        rhoin = expm(-1i*params.softpulsebuffer*(HNAT+Hamshift))*rhoin* ...
-            expm(+1i*params.softpulsebuffer*(HNAT+Hamshift));
-        rhogoal = expm(1i*params.softpulsebuffer*(HNAT+Hamshift))*rhogoal* ...
-            expm(-1i*params.softpulsebuffer*(HNAT+Hamshift));
+    if(params.softpulsebuffer ~= 0)
+        if(params.searchtype == 1)
+            Uwant = expm(1i*params.softpulsebuffer*(HNAT+Hamshift))*Uwant*expm(1i*params.softpulsebuffer*(HNAT+Hamshift));
+        elseif(params.searchtype == 2)
+            rhoin = expm(-1i*params.softpulsebuffer*(HNAT+Hamshift))*rhoin* ...
+                expm(+1i*params.softpulsebuffer*(HNAT+Hamshift));
+            rhogoal = expm(1i*params.softpulsebuffer*(HNAT+Hamshift))*rhogoal* ...
+                expm(-1i*params.softpulsebuffer*(HNAT+Hamshift));
+        end
     end
-
+    
     if(params.Zfreedomflag)
         if(params.searchtype == 1)
             Uwant = diag(exp(1i*pi*Zpost))*Uwant*diag(exp(1i*pi*Zpre));
@@ -83,24 +85,24 @@ for Hamct = 1:1:length(Hamdist)
     
     %Loop over r.f. dist
     for rfct = 1:size(rfdist,1)
-
+        
         %If we are doing a line search we only need the value of the
         %fitness function
         if(nargout==1)
-
+            
             %Calculate the total propgator
             Usim = pulsefinder_calcprop(pulse,HNAT+Hamshift,RFmatts,rfdist(rfct,2),1);
-
+            
             %Calculate the trace squared fidelity of the propagator
             if(params.searchtype == 1)
                 goodness = goodness + Hamdist(Hamct)*rfdist(rfct,1)*(abs(trace(Usim'*Uwant)))^2;
             elseif(params.searchtype == 2)
                 goodness = goodness + Hamdist(Hamct)*rfdist(rfct,1)*(abs(trace(Usim*rhoin*Usim'*rhogoal')))^2;
             end
-
+            
             %Otherwise we need to store each timestep and calculate the derivatives
         else %nargout == 1 if
-
+            
             %Calculate the Hamiltonian for each step and the propagator (if we
             %are doing timestep derivatives, we also need to store the HTOT for
             %each step
@@ -109,23 +111,23 @@ for Hamct = 1:1:length(Hamdist)
             else
                 prop = pulsefinder_calcprop(pulse,HNAT+Hamshift,RFmatts,rfdist(rfct,2),0);
             end
-
+            
             %Now calculate the derivatives
             if(params.Zfreedomflag)
                 [tmpderivs,tmpgoodness,tmpzderivs] = pulsefinder_calcderivs(prop,Uwant,rhoin,rhogoal,RFmatts,pulse,HTOT,params,corrmat);
             else
                 [tmpderivs,tmpgoodness] = pulsefinder_calcderivs(prop,Uwant,rhoin,rhogoal,RFmatts,pulse,HTOT,params,corrmat);
             end
-
+            
             goodness = goodness + Hamdist(Hamct)*rfdist(rfct,1)*tmpgoodness;
             derivs = derivs + Hamdist(Hamct)*rfdist(rfct,1)*rfdist(rfct,2)*tmpderivs;
-   
+            
             if(params.Zfreedomflag)
                 zderivs = zderivs + Hamdist(Hamct)*rfdist(rfct,1)*tmpzderivs;
             end
-
+            
         end %nargout == 1 if
-
+        
     end %rfct
 end %Hamct loop
 
