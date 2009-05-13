@@ -37,9 +37,9 @@ if(params.onofframps)
 % param2 determines how quickly the penalty decreases/increases as
 % you move away from the end points (larger = decreases faster)
 % The penalty function is some sort of cosh function
-  numpts = 10;
-  param1 = 1e-4;
-  param2 = 0.25;
+  numpts = params.onoff_numpts;
+  param1 = params.onoff_param1;
+  param2 = params.onoff_param2;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
 
   for ct = 1:1:size(RFmatts,3)
