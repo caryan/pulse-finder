@@ -1,3 +1,5 @@
+function params = sampleparams2()
+
 global pulseguess
 global Uwantin
 
@@ -132,6 +134,9 @@ params.Zfreedomflag = 1;
 %Parameter to force the beginnings and end of the pulse to zero
 %with a penalty function
 params.onofframps = 0;
+params.onoff_numpts = 10;
+params.onoff_param1 = 1e-3;
+params.onoff_param2 = 0.25;
 
 %Display every x seconds irrespective of how things are improved
 params.dispevery = 60;
