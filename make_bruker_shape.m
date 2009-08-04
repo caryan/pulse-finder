@@ -2,11 +2,12 @@ function make_bruker_shape(pulsestrucin,calib,outputfile,channel,brukerflag)
 
 %This function converts x-y amplitude from pulsefinder into amplitude and phase for spectrometer/simulator
 %
-%Call  make_bruker_shape(pulsestrucin,calib,outputfile,channel)
+%Call  make_bruker_shape(pulsestrucin,calib,outputfile,channel, brukerflag)
 % pulse is the pulse you want to convert
 % calib is the calibration value in Hz
 % outputfile is the outputfilename
 % channel is optional input for which channel you want to convert
+% brukerflag is flag for whether to put Bruker info at top of file
 
 if(nargin<4)
     channel = 1;
