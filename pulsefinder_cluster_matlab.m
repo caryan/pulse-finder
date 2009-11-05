@@ -1,4 +1,4 @@
-classdef pulsefinder_cluster < handle
+classdef pulsefinder_cluster_matlab < handle
 
     properties
         %IP address of the cluster with username (note need passwordless

@@ -1,4 +1,3 @@
-function params = sampleparams2()
 
 global pulseguess
 global Uwantin

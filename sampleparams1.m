@@ -1,4 +1,3 @@
-function params = sampleparams1()
 
 global pulseguess
 global Uwantin
@@ -7,7 +6,7 @@ global Uwantin
 params = [];
 
 %Location of the nuclei file (full path name)
-params.nucleifile = 'molecule_sample1.def';
+params.nucleifile = '/u/c4ryan/pulsefinding/molecule_sample1.def';
 
 %Number of timesteps
 params.plength = 100;
@@ -43,7 +42,7 @@ params.subsystem{1} = [1 2 3];
 params.subsys_weight = [1];
 
 %Desired fidelity for the unitary (this is the trace squared fidelity F = abs(Ugoal^dagger*Usim)^2/N^2)
-params.fidelity = 0.999;
+params.fidelity = 0.995;
 
 %RF distribution to optimize over (will slow down search and convergence dramatically)
 %Two dimensional array first column is percentage of sample; second

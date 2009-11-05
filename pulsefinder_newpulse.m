@@ -1,8 +1,8 @@
-function [pulse,zangles,params] = pulsefinder_newpulse(params)
+function [pulse,zangles,params] = pulsefinder_newpulse(params,outputFID)
 
 %Load the pulse from the intial guess or create a new random guess
 if(~isempty(params.pulseguess))
-    disp(sprintf('\nLoading pulse from params.pulseguess'));
+    fprintf(outputFID,'\nLoading pulse from params.pulseguess....\n\n');
     pulse = params.pulseguess.pulse;
     
     %Scale the pulse with respect to the max power
@@ -21,7 +21,7 @@ else
 
     %Initialize the pulse i.e. create a skeleton of random points for each rf. field and then
     %fit the points with a interpolating cubic spline
-    disp(sprintf('\nTrying new random guess....'));
+    fprintf(outputFID,'\nTrying new random guess....\n\n');
 
     xold = [1:params.randevery:params.plength params.plength]';
     xnew = [1:1:params.plength]';

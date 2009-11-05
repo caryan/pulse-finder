@@ -76,7 +76,7 @@ while(goodness < params.fidelity && tryct < params.numtry)
 
     %Create a new pulse guess or load the starting point from
     %params.pulseguess
-    [pulse,zangles,params] = pulsefinder_newpulse(params);
+    [pulse,zangles,params] = pulsefinder_newpulse(params,outputFID);
 
     %Print out a header line
     fprintf(outputFID,' Goodness |  Improvement/step |  Step Size  |  Iterations  |  CPU Time\n');
