@@ -201,12 +201,10 @@ classdef pulsefinder_cluster_sge < handle
             unix(sprintf('scp -q %s/%s %s@%s:%s/.',pf_cluster_obj.localdata,filename,pf_cluster_obj.username,pf_cluster_obj.clusterHost,pf_cluster_obj.remotedata));
         end %copyToCluster method
         
-        %Moethd to copy file from cluster
+        %Method to copy file from cluster
         function copyFromCluster(pf_cluster_obj,filename)
             unix(sprintf('scp -q %s@%s:%s/%s %s/.',pf_cluster_obj.username,pf_cluster_obj.clusterHost,pf_cluster_obj.remotedata,filename,pf_cluster_obj.localdata));
         end %copyFromCluster method
-        
-        
         
         %Method to write the script to correctly setup the environment and
         %run the pulsefinder
