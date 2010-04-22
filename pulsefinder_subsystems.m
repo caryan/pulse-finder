@@ -1,10 +1,10 @@
-function [Uwant_sub,rhoin_sub,rhogoal_sub,RFmatts_sub,HNAT_sub,params] = pulsefinder_subsystems(params,spins)
+function [Uwant_sub,rhoin_sub,rhogoal_sub,RFmatts_sub,HNAT_sub,params] = pulsefinder_subsystems(params,nbspins)
 
 %Helper pulsefinder function to handle the subsystem stuff
 
 %First do some error checking
 if(isempty(params.subsystem{1}))
-    params.subsystem{1} = 1:1:spins.nb;
+    params.subsystem{1} = 1:1:nbspins;
 end
 
 %Setup the RFmatts and HNAT for the subsystems
@@ -22,7 +22,7 @@ for ct = 1:1:nbsub
     params.subsystem{ct} = sort(params.subsystem{ct});
    
     %The spins we are taking out
-    tspins = setxor(params.subsystem{ct},1:1:spins.nb);
+    tspins = setxor(params.subsystem{ct},1:1:nbspins);
 
     %The reduced natural Hamiltonian
     HNAT_sub{ct} = Partrace(params.HNAT,tspins)/2^length(tspins);
@@ -36,12 +36,12 @@ for ct = 1:1:nbsub
     %To avoid a traceless unitary we apply a random unitary and then take the partial trace
     if(~iscell(params.Uwant))
     randU = 1;
-    for ct3 = 1:1:spins.nb
+    for ct3 = 1:1:nbspins
       if(ismember(ct3,tspins))
         %Make a random 1 qubit unitary.  These aren't properly
         %distributed but oh well
         a = 0; b = 2*pi*rand; c = 2*pi*rand; d = 2*pi*rand;
-        singleU = [exp(i*(a-b/2-d/2))*cos(c/2) -exp(i*(a-b/2+d/2))*sin(c/2); exp(i*(a+b/2-d/2))*sin(c/2) exp(i*(a+b/2+d/2))*cos(c/2)];
+        singleU = [exp(1i*(a-b/2-d/2))*cos(c/2) -exp(1i*(a-b/2+d/2))*sin(c/2); exp(1i*(a+b/2-d/2))*sin(c/2) exp(1i*(a+b/2+d/2))*cos(c/2)];
         randU = kron(randU,singleU);
       else
         randU = kron(randU,eye(2));

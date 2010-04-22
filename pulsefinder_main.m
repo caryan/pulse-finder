@@ -41,25 +41,43 @@ end
 params = pulsefinder_loadparams(paramsfile);
 
 %Read the nucleus file and remove ignored spins
-spins = read_nucleus_file(params.nucleifile);
-if(isfield(params,'spins_ignore'))
-    spins.ignore = params.spins_ignore;
-    if(length(spins.ignore)>0)
-        spins = spins_ignore(spins);
+if(isfield(params,'nucleifile'))
+    spins = read_nucleus_file(params.nucleifile);
+    if(isfield(params,'spins_ignore'))
+        spins.ignore = params.spins_ignore;
+        if(~isempty(spins.ignore))
+            spins = spins_ignore(spins);
+        end
     end
 end
 
 %Update the spins.freqs to the pulsing frequencies
-spins.freqs = spins.freqs - params.pulsefreq;
+if(isfield(params,'pulsefreq'))
+    spins.freqs = spins.freqs - params.pulsefreq;
+end
 
 %Create the natural Hamiltonian in the pulsing reference frame
-params.HNAT = full(CreateHamiltonian(spins));
+if(~isfield(params,'HNAT'))
+    params.HNAT = full(CreateHamiltonian(spins));
+end
 
-%Set the total number of spins
-params.nbspins = log2(size(params.HNAT,1));
+%Set the total number of spins assuming spin 1/2
+if(~isfield(params,'nbspins'))
+    params.nbspins = log2(size(params.HNAT,1));
+end
+
+%Set the size of the Hilbert space if it hasn't
+if(~isfield(params,'HilbertDim'))
+    params.HilbertDim = size(params.HNAT,1);
+end
 
 %Sort out the subsystems
-[Uwant_sub,rhoin_sub,rhogoal_sub,RFmatts_sub,HNAT_sub,params] = pulsefinder_subsystems(params,spins);
+%[Uwant_sub,rhoin_sub,rhogoal_sub,RFmatts_sub,HNAT_sub,params] = pulsefinder_subsystems(params,params.nbspins);
+Uwant_sub{1} = params.Uwant;
+RFmatts_sub{1} = 2*pi*8e6*params.RFmatts;
+HNAT_sub{1} = params.HNAT;
+rhoin_sub{1} = [];
+rhogoal_sub{1} = [];
 
 %Initialize some of the optimization variables
 goodness = 0;
@@ -92,10 +110,10 @@ while(goodness < params.fidelity && tryct < params.numtry)
     olddirec  = zeros(size(pulse));
     oldpulse = zeros(size(pulse));
 
-    goodzdirec = zeros(2,spins.nb);
-    oldzderivs = zeros(2,spins.nb);
-    oldzdirec = zeros(2,spins.nb);
-    oldzangles = zeros(2,spins.nb);
+    goodzdirec = zeros(2,params.nbspins);
+    oldzderivs = zeros(2,params.nbspins);
+    oldzdirec = zeros(2,params.nbspins);
+    oldzangles = zeros(2,params.nbspins);
 
     betaresetct = 0;
 
@@ -124,7 +142,7 @@ while(goodness < params.fidelity && tryct < params.numtry)
         %current pulse and calculates the approximate derivatives
         goodness = 0;
         derivs = zeros(size(pulse));
-        zderivs = zeros(2,spins.nb);
+        zderivs = zeros(2,params.nbspins);
         if(params.Zfreedomflag)
             for ct = 1:1:length(params.subsystem)
                 [tmpgoodness,tmpderivs,tmpzderivs] = pulsefinder_evalpulse(pulse,HNAT_sub{ct},RFmatts_sub{ct},Uwant_sub{ct},rhoin_sub{ct},rhogoal_sub{ct},zangles(:,params.subsystem{ct}),params);

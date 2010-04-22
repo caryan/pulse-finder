@@ -6,7 +6,7 @@ global Uwantin
 params = [];
 
 %Location of the nuclei file (full path name)
-params.nucleifile = '/u/c4ryan/pulsefinding/molecule_sample1.def';
+params.nucleifile = '/Users/caryan/MatlabCode/NMR/Programs/pulsefinder/molecule_sample1.def';
 
 %Number of timesteps
 params.plength = 100;

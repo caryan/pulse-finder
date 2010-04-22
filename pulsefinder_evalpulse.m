@@ -12,12 +12,9 @@ Hamdist = params.Hamdist;
 %Initialize the goodness variable
 goodness  = 0;
 
-%Calculate the number of spins we are dealing with
-nbspins = log2(size(HNAT,1));
-
 %Initialize the derivatives
 derivs = zeros(size(pulse));
-zderivs = zeros(2,nbspins);
+zderivs = zeros(2,params.nbspins);
 
 %Initialize a matrix for Hamiltonian storage
 HTOT = [];
@@ -30,10 +27,10 @@ corrmat = [];
 if(params.Zfreedomflag)
     
     %Set up the corrmat: each column contains the diagonal of ZIII,IZII....
-    corrmat = zeros(2^nbspins,nbspins);
-    for ct = 1:1:nbspins
+    corrmat = zeros(params.HilbertDim,nbspins);
+    for ct = 1:1:params.nbspins
         reps = 2^(ct-1);
-        corrmat(:,end-ct+1) =  repmat([zeros(reps,1);ones(reps,1)],2^nbspins/reps/2,1);
+        corrmat(:,end-ct+1) =  repmat([zeros(reps,1);ones(reps,1)],params.HilbertDim/reps/2,1);
     end
     corrmat  = -2*corrmat +1;
     
@@ -133,10 +130,10 @@ end %Hamct loop
 
 %Scale the goodness and derivs
 if(params.searchtype == 1)
-    goodness =  goodness/2^(2*nbspins);
-    derivs = derivs/2^(2*nbspins);
+    goodness =  goodness/params.HilbertDim^2;
+    derivs = derivs/params.HilbertDim^2;
     if(params.Zfreedomflag)
-        zderivs = zderivs/2^(2*nbspins);
+        zderivs = zderivs/params.HilbertDim^2;
     end
 else
     goodness = goodness/abs(trace(rhoin^2)*trace(rhogoal^2));

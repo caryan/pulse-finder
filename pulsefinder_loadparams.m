@@ -11,8 +11,6 @@ if(isfield(params,'nucleifile'))
     if(~exist(params.nucleifile,'file'))
         error('nuclei file specified does not exist.');
     end
-else
-    error('nucleifile field in params not specified');
 end
 
 %Check for the plength field
