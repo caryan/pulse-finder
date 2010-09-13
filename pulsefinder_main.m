@@ -72,12 +72,7 @@ if(~isfield(params,'HilbertDim'))
 end
 
 %Sort out the subsystems
-%[Uwant_sub,rhoin_sub,rhogoal_sub,RFmatts_sub,HNAT_sub,params] = pulsefinder_subsystems(params,params.nbspins);
-Uwant_sub{1} = params.Uwant;
-RFmatts_sub{1} = 2*pi*8e6*params.RFmatts;
-HNAT_sub{1} = params.HNAT;
-rhoin_sub{1} = [];
-rhogoal_sub{1} = [];
+[Uwant_sub,rhoin_sub,rhogoal_sub,RFmatts_sub,HNAT_sub,params] = pulsefinder_subsystems(params,params.nbspins);
 
 %Initialize some of the optimization variables
 goodness = 0;
