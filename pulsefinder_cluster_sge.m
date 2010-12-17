@@ -4,11 +4,11 @@ classdef pulsefinder_cluster_sge < handle
         %IP address of the cluster with username (note need passwordless
         %ssh log in)
         clusterHost = 'feynman.math.uwaterloo.ca';
-        username = 'c4ryan'
+        username = 'glpassan'
         %Directory on remote host to work out of
-        remotedata = '/u/c4ryan/pulsefinding';
+        remotedata = '/u/glpassante/pulsefinder';
         %Location of compiled puslefinder executable on cluster
-        pulsefinder_exec = '/u/c4ryan/pulsefinder/pulsefinder/distrib/pulsefinder';
+        pulsefinder_exec = '/u/glpassante/pulsefinder/pulsefinder_feynman/distrib/pulsefinder_feynman';
         %Location of working directory on the local computer
         localdata = tempdir;
         %Array of pulse numbers
@@ -236,10 +236,20 @@ classdef pulsefinder_cluster_sge < handle
             fprintf(scriptFID,'export LD_LIBRARY_PATH;\n');
             fprintf(scriptFID,'export XAPPLRESDIR;\n');
             fprintf(scriptFID,'\n');
-            
+            fprintf(scriptFID,'\n');
+            % start Colin Hacking
+            fprintf(scriptFID,'#export MCR_CACHE_VERBOSE=1\n');
+            fprintf(scriptFID,'UNIQ=$(/usr/bin/uuidgen)\n');
+            fprintf(scriptFID,'mkdir /tmp/$UNIQ\n');
+            fprintf(scriptFID,'export MCR_CACHE_ROOT="/tmp/$UNIQ/"\n');
+            %fprintf(scriptFID,'SHELLOG=%s/pulsefinder%d.shlog\n',pf_cluster_obj.remotedata,pulsenum);
+            %fprintf(scriptFID,'echo pulsefinder%d > $SHELLOG\n', pulsenum);
+            %fprintf(scriptFID,'echo $(hostname) >> $SHELLOG\n');
+            % end Colin Hacking
             %Run the pulseprogram
             fprintf(scriptFID,'%s %s/%s %s/pulsefinder%d.log\n',pf_cluster_obj.pulsefinder_exec,pf_cluster_obj.remotedata,pf_cluster_obj.tasks(pulsenum).paramsfile,pf_cluster_obj.remotedata,pulsenum);
             fprintf(scriptFID,'\n');
+            fprintf(scriptFID,'rm -rf /tmp/$UNIQ\n');
             fprintf(scriptFID,'exit\n');
             
             %Close the file
